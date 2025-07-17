@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction IA</title>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Ensure html and body take full viewport height */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: transparent; /* Changed to transparent background */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column; /* Default to column for small screens */
+            width: 100%;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 100%;
+            background: white; /* White background as per image */
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow as per image */
+            border: none; /* No border as per image */
+            border-radius: 15px; /* More rounded corners */
+            overflow-y: auto;
+            flex-shrink: 0;
+            /* Added for sticky behavior */
+            position: sticky;
+            top: 0;
+            align-self: flex-start; /* Ensures it aligns to the start and sticks */
+        }
+
+        .sidebar h2 {
+            color: #33691e; /* Original heading color */
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: none; /* No border as per image */
+        }
+
+        /* New AI Form Indicator Styles */
+        .ai-form-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px; /* Space above the indicator, after score */
+            width: 100%; /* Ensure it takes full width of its parent for centering */
+        }
+
+        .ai-form-circle {
+            width: 60px; /* Smaller size */
+            height: 60px; /* Smaller size */
+            background-color: #0e7658; /* Green color */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8em; /* Adjusted font size to fit */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Shadow for the circle */
+            margin-bottom: 8px; /* Space between circle and text below */
+        }
+
+        .ai-form-text {
+            color: #0e7658; /* Green color for the text */
+            font-weight: 600;
+            font-size: 0.8em; /* Smaller font size */
+            text-align: center;
+        }
+
+
+        .menu-item {
+            background: #0e7658; /* New green color */
+            color: white; /* White text for contrast */
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px; /* Rounded corners like in the image */
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow as per image */
+            border: none; /* No border as per image */
+        }
+
+        .menu-item:hover {
+            background: #0a5c45; /* Darker green on hover */
+            color: white;
+            transform: translateY(-3px); /* Less pronounced lift */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+        }
+
+        .menu-item.active {
+            background: #0a5c45; /* Darker green when active */
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+            border: none;
+        }
+
+        .menu-item.completed {
+            position: relative;
+            background: #5cb85c; /* Green for completed */
+            color: white;
+            border: none;
+        }
+
+        .menu-item.completed::after {
+            content: '✓';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .score-display {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow as per image */
+            border: none; /* No border as per image */
+        }
+
+        .score-display h3 {
+            color: #0e7658; /* New green color for "Ton Score" */
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-display h3::before {
+            content: '🏆'; /* Trophy emoji as per image */
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .score-display .points {
+            font-size: 2.5em;
+            color: #0e7658; /* New green color for score points */
+            text-shadow: none; /* Removed text shadow */
+            font-weight: 700;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Subtler shadow */
+            border: 1px solid #ddd; /* Subtler border */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            margin-bottom: 20px;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.6s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); } /* Less pronounced animation */
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h1 {
+            color: #33691e;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: none;
+        }
+
+        .section h2 {
+            color: #33691e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            text-align: center;
+            text-shadow: none;
+        }
+
+        .section h3 {
+            color: #33691e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .section p {
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+            text-align: justify;
+        }
+
+        .section ul {
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+            text-align: justify;
+            padding-left: 20px;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+        }
+        
+        /* Style for dates in the history section */
+        #history strong {
+            color: #0e7658; /* Green color for dates */
+        }
+
+        .game-container {
+            background: #f8f8f8;
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 30px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Subtler inner shadow */
+            border: 1px solid #ccc; /* Subtler border */
+        }
+
+        .game-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #33691e;
+            color: #333;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtler shadow */
+        }
+
+        .game-instructions h3 {
+            color: #33691e;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: #e0feca;
+            color: #333;
+            padding: 12px 24px;
+            border: 1px solid #ccc; /* Subtler border */
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtler shadow */
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #33691e;
+            color: white;
+            transform: translateY(-3px); /* Less pronounced lift */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtler shadow */
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #cccccc;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn.correct {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn.incorrect {
+            background: #f44336;
+            color: white;
+            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.2);
+        }
+
+        /* Quiz Styles (for final quiz) */
+        .quiz-question {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtler shadow */
+            border: 1px solid #eee; /* Subtler border */
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            transition: opacity 0.5s ease-in-out;
+            border: 1px solid; /* Subtler border */
+        }
+
+        .feedback.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-color: #2e7d32;
+        }
+
+        .feedback.error {
+            background: #ffcdd2;
+            color: #c62828;
+            border-color: #c62828;
+        }
+
+        /* Emoji decorations */
+        .emoji-decoration {
+            font-size: 3.5em;
+            text-align: center;
+            margin: 20px 0;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); } /* Even less pronounced bounce */
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            background: #e0e0e0;
+            height: 12px; /* Slightly thinner */
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtler shadow */
+            border: none; /* Removed border */
+        }
+
+        .progress-fill {
+            background: linear-gradient(to right, #e0feca, #33691e); /* Original gradient */
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-out;
+            border-radius: 6px;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row; /* Back to row layout for larger screens */
+                align-items: flex-start; /* Align items to the start to allow sticky sidebar */
+            }
+
+            .sidebar {
+                width: 280px;
+                flex-shrink: 0;
+                height: auto; /* Allow height to be determined by content and sticky behavior */
+                margin-right: 20px; /* Add some space between sidebar and main content */
+            }
+
+            .main-content {
+                flex: 1;
+                align-self: stretch; /* Make main-content stretch to container height */
+                height: auto; /* Allow height to be determined by content and stretch */
+                max-width: 900px; /* Limit max-width for larger screens */
+                margin: 0 auto; /* Center the content */
+            }
+
+            .section {
+                padding: 40px;
+                margin-bottom: 0; /* Remove bottom margin if sections don't stack */
+            }
+
+            .score-display {
+                margin-top: 20px; /* Revert margin for sidebar score display */
+                max-width: none; /* Remove max-width when sidebar is present */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2></h2>
+            <div class="menu-item" onclick="showSection('origins')">Les origines de l'IA</div>
+            <div class="menu-item" onclick="showSection('intro')">Définitions</div>
+            <div class="menu-item" onclick="showSection('history')">Histoire de l'IA</div>
+            <div class="menu-item" onclick="showSection('forms')">Formes d'IA</div>
+            <div class="menu-item" onclick="showSection('daily')">IA dans notre quotidien</div>
+            <div class="menu-item" onclick="showSection('final')">Quiz final</div>
+            <div class="score-display">
+                <h3>Ton Score</h3>
+                <div class="points" id="score">0</div>
+                <div>points</div>
+            </div>
+            <!-- AI Form Indicator re-added below score-display -->
+            <div class="ai-form-indicator">
+                
+                <p class="ai-form-text">Mis en forme par IA 🎨</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Section: Les origines de l'IA -->
+            <div class="section active" id="origins">
+                <h1>L'Intelligence Artificielle : Des Origines théoriques aux applications contemporaines</h1>
+                <div class="emoji-decoration">🏛️</div>
+                <p>L'intelligence artificielle représente l'une des branches les plus fascinantes et ambitieuses de l'informatique moderne. Née dans les années 1950, cette discipline trouve ses racines dans une quête fondamentale : créer des machines capables de reproduire, voire de surpasser, certaines capacités cognitives humaines.</p>
+
+                <h2>Les Fondements historiques : De la vision à la réalité</h2>
+                <p>L'histoire de l'IA commence véritablement avec les travaux visionnaires du mathématicien britannique Alan Turing. En 1950, dans son article révolutionnaire <em>Computing Machinery and Intelligence</em>, Turing pose une question qui résonne encore aujourd'hui : "Les machines peuvent-elles penser ?" Cette interrogation n'était pas purement philosophique ; elle s'accompagnait d'une proposition concrète pour y répondre. Le test de Turing, comme on l'appelle désormais, suggère qu'une machine peut être considérée comme "intelligente" si elle parvient à tromper un interlocuteur humain lors d'une conversation, celui-ci étant incapable de déterminer s'il s'adresse à une machine ou à un être humain.</p>
+                <p>Cette réflexion théorique a trouvé son prolongement institutionnel en 1956, lors de la conférence de Dartmouth College, événement fondateur qui marque la naissance officielle de l'intelligence artificielle comme discipline scientifique. Cette rencontre historique, organisée par John McCarthy, Marvin Minsky, Nathaniel Rochester et Claude Shannon, avait pour objectif ambitieux de "faire en sorte que les machines utilisent le langage, forment des abstractions et des concepts, résolvent des types de problèmes maintenant réservés aux humains, et s'améliorent". C'est lors de cette conférence que le terme "intelligence artificielle" fut officiellement adopté et popularisé.</p>
+
+                <h2>Les Objectifs fondamentaux</h2>
+                <p>Le projet de l'intelligence artificielle repose sur une ambition technique et scientifique considérable : concevoir des systèmes informatiques capables d'apprendre de manière autonome, de raisonner face à des situations complexes, de s'adapter à des environnements changeants et de résoudre des problèmes qui nécessitent traditionnellement l'intervention de l'intelligence humaine. Cette quête implique de reproduire artificiellement des processus cognitifs tels que la perception, la mémorisation, l'analyse logique, la prise de décision et même la créativité.</p>
+                <p>Pour atteindre ces objectifs, les chercheurs s'appuient sur un arsenal technologique sophistiqué. Les algorithmes avancés constituent la colonne vertébrale de ces systèmes, tandis que les modèles mathématiques permettent de formaliser et de quantifier les processus de raisonnement. Plus récemment, l'essor de l'apprentissage automatique (machine learning) et de l'apprentissage profond (deep learning) a révolutionné le domaine. Ces techniques exploitent d'immenses quantités de données pour permettre aux machines d'améliorer leurs performances par l'expérience, à la manière dont un enfant apprend progressivement à reconnaître des objets ou à comprendre le langage.</p>
+
+                <h2>La diversité des applications contemporaines</h2>
+                <p>L'intelligence artificielle d'aujourd'hui ne se limite plus aux laboratoires de recherche ; elle s'est démocratisée et intégrée dans notre quotidien sous des formes multiples et variées. Les agents conversationnels comme ChatGPT illustrent parfaitement cette évolution : ils démontrent une capacité remarquable à comprendre et à générer du langage naturel, ouvrant la voie à de nouvelles formes d'interaction homme-machine.</p>
+                <p>Dans le domaine des transports, les voitures autonomes représentent l'un des défis les plus complexes de l'IA contemporaine. Ces véhicules doivent intégrer simultanément la perception visuelle, la prédiction des comportements, la planification de trajectoires et la prise de décision en temps réel, le tout dans un environnement imprévisible et potentiellement dangereux.</p>
+                <p>La reconnaissance faciale, devenue omniprésente dans nos smartphones et systèmes de sécurité, illustre la capacité de l'IA à traiter et analyser des données visuelles complexes. Les outils de traduction automatique, quant à eux, démontrent comment l'IA peut franchir les barrières linguistiques en comprenant non seulement la structure grammaticale des langues, mais aussi leurs nuances sémantiques et culturelles.</p>
+                <p>Dans le domaine médical, les logiciels de diagnostic assisté par IA révolutionnent la pratique clinique en analysant des images médicales, en identifiant des comportements pathologiques ou en prédisant l'évolution de certaines maladies avec une précision parfois supérieure à celle des spécialistes humains.</p>
+
+                <h2>Une transformation sociétale en cours</h2>
+                <p>Il est important de comprendre que, malgré leur sophistication croissante, ces systèmes demeurent fondamentalement des programmes informatiques. Cependant, leur impact dépasse largement le cadre technologique pour toucher l'ensemble de nos sociétés. L'intelligence artificielle redéfinit nos modes de travail, nos interactions sociales, nos processus décisionnels et même notre rapport à la connaissance et à l'information.</p>
+                <p>Cette transformation s'accompagne de défis considérables : questions éthiques liées à l'autonomie des machines, problèmes de biais dans les algorithmes, enjeux de protection des données personnelles, ou encore interrogations sur l'impact économique et social de l'automatisation. Comprendre l'IA dans sa dimension historique et technique devient donc essentiel pour naviguer dans un monde où cette technologie occupe une place croissante.</p>
+                <p>L'intelligence artificielle représente ainsi bien plus qu'une simple innovation technologique : elle constitue un nouveau paradigme qui nous invite à repenser notre relation à la technologie, à l'intelligence et, ultimement, à nous-mêmes.</p>
+            </div>
+
+            <!-- Section: Définitions -->
+            <div class="section" id="intro">
+                <h1>Définitions de l'Intelligence Artificielle</h1>
+                <div class="emoji-decoration">💡</div>
+                <p>Il n’existe pas de définition officielle et universelle de l’intelligence artificielle (IA), mais toutes les définitions en circulation expriment globalement la même idée : il s’agit de techniques permettant à des machines d’imiter certaines capacités humaines, comme raisonner, apprendre, résoudre des problèmes ou encore comprendre le langage.</p>
+                <p><strong>Attention :</strong> de nombreuses personnes utilisent aujourd’hui le terme intelligence artificielle pour désigner principalement l’IA générative (comme les agents conversationnels, les générateurs d’images ou de textes). Or, ce n’est qu’une branche récente de l’IA. L’intelligence artificielle est un domaine bien plus vaste et bien plus ancien, l'IA ne se résume donc ni à ChatGPT, ni aux seuls outils génératifs : elle englobe un ensemble complexe de technologies en constante évolution. Nous en parlerons plus en détails dans d'autres parties de ce manuel.</p>
+
+                <h3>Définition de l'Association pour l'Avancement de l'Intelligence Artificielle (AAAI) :</h3>
+                <p>L'AAAI définit l'IA comme la discipline de l'informatique qui se consacre à créer des agents capables de résoudre des problèmes, d'apprendre, de communiquer en langage naturel et de percevoir et d'agir dans des environnements numériques ou physiques.</p>
+
+                <h3>Définition de John McCarthy, pionnier de l'IA :</h3>
+                <p>John McCarthy, qui a organisé la conférence de Dartmouth en 1956, a déclaré "L'intelligence artificielle est la science et l'ingénierie pour faire des machines intelligentes, en particulier des programmes informatiques intelligents."</p>
+
+                <h3>Définition du Larousse :</h3>
+                <p>Ensemble de théories et de techniques mises en œuvre en vue de réaliser des machines capables de simuler l'intelligence humaine.</p>
+
+                <h3>À l'échelle du Parlement européen :</h3>
+                <p>L’intelligence artificielle “désigne la possibilité pour une machine de reproduire des comportements liés aux humains, tels que le raisonnement, la planification et la créativité”.</p>
+
+                <h3>Dans le cadre d'usage de l'IA en éducation publié en juin 2025 :</h3>
+                <p>"L'intelligence artificielle est définie comme tout service numérique fondé sur des algorithmes probabilistes, s’appuyant sur le traitement statistique de vastes ensembles de données sur lesquels ils sont entraînés et capables de produire des résultats comparables à ceux obtenus par une activité cognitive humaine. On parle d’IA « prédictive » pour les modèles permettant de classifier des données ou d’anticiper des événements, tendances ou risques, et d’IA « générative » pour les modèles capables de produire des contenus (texte, image, son, vidéo)."</p>
+
+                <h3>Version simplifiée :</h3>
+                <p>L’intelligence artificielle désigne des outils numériques qui utilisent beaucoup de données et des calculs complexes pour imiter certaines capacités humaines, comme réfléchir ou créer. On parle d’IA prédictive quand elle sert à prévoir ou classer, et d’IA générative quand elle crée du contenu, comme du texte, des images ou des sons.</p>
+
+                <p>Ces définitions illustrent la diversité des perspectives sur ce qu'est l'intelligence artificielle, mais elles partagent généralement l'idée que l'IA concerne la création de systèmes capables de réaliser des tâches généralement associées à l'intelligence humaine.</p>
+            </div>
+
+            <!-- Section: Histoire de l'IA -->
+            <div class="section" id="history">
+                <h1>Histoire de l'IA</h1>
+                <div class="emoji-decoration">🕰️</div>
+                <p>Après les prémices théoriques, le concept moderne de l'IA a pris forme au milieu du XXe siècle, marquant le début de son développement en tant que discipline scientifique et technologique. Voici les dates clés de son évolution :</p>
+                <ul>
+                    <li><strong style="color: #0e7658;">1950 :</strong> Publication de l'article visionnaire d'Alan Turing, "Computing Machinery and Intelligence", introduisant le concept du Test de Turing.</li>
+                    <li><strong style="color: #0e7658;">1956 :</strong> Conférence de Dartmouth, où le terme "Intelligence Artificielle" est officiellement inventé et popularisé par John McCarthy.</li>
+                    <li><strong style="color: #0e7658;">1966 :</strong> Création d'ELIZA par Joseph Weizenbaum, un des premiers programmes de traitement du langage naturel, simulant une conversation.</li>
+                    <li><strong style="color: #0e7658;">Années 1970-1980 :</strong> Périodes des "hivers de l'IA", où l'enthousiasme initial retombe en raison de limites techniques et d'un manque de financement.</li>
+                    <li><strong style="color: #0e7658;">Années 1980 :</strong> Essor des <strong>Systèmes Experts</strong>, des programmes basés sur des règles qui simulent le raisonnement d'experts humains dans des domaines spécifiques.</li>
+                    <li><strong style="color: #0e7658;">1997 :</strong> Deep Blue d'IBM bat le champion du monde d'échecs Garry Kasparov, une victoire marquante pour l'IA basée sur la force brute de calcul.</li>
+                    <li><strong style="color: #0e7658;">2015 :</strong> Les avancées en <strong>Perceptron</strong> (réseaux de neurones) et en Deep Learning commencent à transformer des domaines comme la reconnaissance d'images et la traduction.</li>
+                    <li><strong style="color: #0e7658;">2018 :</strong> L'émergence des premiers <strong>Large Language Models (LLM)</strong>, comme GPT-1, marque un tournant pour l'IA conversationnelle et générative.</li>
+                    <li><strong style="color: #0e7658;">Avril 2023 :</strong> Fondation de Mistral AI (start-up européenne LLM open source).</li>
+                    <li><strong style="color: #0e7658;">Mars 2024 :</strong> Adoption de l’AI Act par le Parlement européen (régulation IA).</li>
+                    <li><strong style="color: #0e7658;">2024 :</strong> Explosion des modèles « text-to-video ».</li>
+                    <li><strong style="color: #0e7658;">2024 :</strong> Marque le développement et la diffusion des premiers agents IA destinés au grand public.</li>
+                    <li><strong style="color: #0e7658;">2025 :</strong> Publication du "Cadre d'usage de l'IA en éducation", un document important pour l'intégration responsable de l'IA dans le système éducatif.</li>
+                </ul>
+                <div id="loading-image" style="text-align: center; margin-top: 20px; display: none;">
+                    <p>Génération de l'image en cours... ⏳</p>
+                </div>
+                <div id="generated-image-container" style="text-align: center; margin-top: 30px;">
+                    <!-- L'image générée sera insérée ici -->
+                </div>
+            </div>
+
+            <!-- Section: Formes d'IA -->
+            <div class="section" id="forms">
+                <h1>Comprendre l'Intelligence Artificielle : Un Guide Complet</h1>
+                <div class="emoji-decoration">🧩</div>
+                <p>L'intelligence artificielle peut sembler mystérieuse et complexe, mais elle devient plus claire lorsqu'on comprend qu'elle n'est pas une technologie unique. Imaginez plutôt l'IA comme une grande famille d'outils et de méthodes, chacun conçu pour résoudre des problèmes spécifiques. Cette diversité explique pourquoi certaines IA excellent aux échecs tandis que d'autres créent des œuvres d'art ou conduisent des voitures.</p>
+
+                <h2>Les Deux Grands Courants de l'IA</h2>
+                <h3>1. L'Approche Symbolique : L'IA qui Raisonne comme un Expert</h3>
+                <p>L'IA symbolique fonctionne comme un scientifique méthodique qui applique des règles précises pour résoudre des problèmes. Contrairement aux approches modernes qui apprennent à partir de données massives, cette forme d'IA s'appuie sur des connaissances structurées et une logique claire, transmises directement par des experts humains.</p>
+                <p>Pourquoi cette approche est-elle importante ? Elle excelle dans les domaines où la précision et la fiabilité sont cruciales : diagnostic médical, contrôle de robots industriels, planification d'itinéraires, ou gestion de systèmes complexes. Ces applications, appelées systèmes experts, constituent la colonne vertébrale de nombreuses technologies que nous utilisons quotidiennement sans même le réaliser.</p>
+                <h4>Exemple concret : Deep Blue et les échecs</h4>
+                <p>Deep Blue, le superordinateur qui a battu le champion du monde d'échecs Garry Kasparov en 1997, illustre parfaitement cette approche. Contrairement à un joueur humain qui peut s'appuyer sur l'intuition, Deep Blue fonctionnait selon des principes entièrement logiques :</p>
+                <ul>
+                    <li>Règles précises : Chaque coup était évalué selon des critères définis par des maîtres d'échecs</li>
+                    <li>Logique claire : Aucune "intuition" ou approximation, uniquement des calculs systématiques</li>
+                    <li>Anticipation stratégique : Analyse de millions de séquences possibles pour chaque coup</li>
+                    <li>Expertise codifiée : Intégration des stratégies développées par les plus grands champions</li>
+                </ul>
+                <p>Deep Blue était donc comme un bibliothécaire ultra-rapide qui consultait instantanément toutes les connaissances échiquéennes jamais développées pour choisir le meilleur coup possible.</p>
+                <h4>Découvrez par vous-même : Akinator</h4>
+                <p>Pour comprendre concrètement comment fonctionne un système expert, essayez Akinator sur <a href="https://fr.akinator.com/" target="_blank">akinator.com</a>. Ce jeu en ligne devine le personnage auquel vous pensez en posant des questions stratégiques. Chaque question affine les possibilités grâce à une vaste base de données qui s'enrichit à chaque partie. C'est un exemple amusant d'IA symbolique en action, montrant comment les algorithmes peuvent analyser et résoudre des problèmes par déduction logique.</p>
+
+                <h3>2. L'Approche Basée sur les Données : L'IA qui Apprend</h3>
+                <p>Cette approche, dominante aujourd'hui, révolutionne notre façon de concevoir l'intelligence artificielle. Au lieu de programmer explicitement chaque règle, ces systèmes apprennent à partir de données, identifient des modèles complexes et prennent des décisions avec une intervention humaine minimale.</p>
+                <h4>L'Apprentissage Automatique : La Fondation</h4>
+                <p>L'apprentissage automatique (Machine Learning) constitue le socle de cette approche. Imaginez un enfant qui apprend à reconnaître les animaux : il observe des milliers d'exemples, identifie progressivement les caractéristiques communes, et développe la capacité de reconnaître de nouveaux animaux qu'il n'a jamais vus. L'IA fonctionne de manière similaire, mais avec une capacité de traitement bien supérieure.</p>
+                <h4>L'Apprentissage Profond : Imiter le Cerveau</h4>
+                <p>L'apprentissage profond (Deep Learning) pousse cette analogie plus loin en utilisant des réseaux de neurones artificiels inspirés du cerveau humain. Ces réseaux comportent de nombreuses couches (d'où le terme "profond") qui permettent d'analyser des données complexes comme des images, des sons ou du texte. Chaque couche extrait des caractéristiques de plus en plus sophistiquées, comme le ferait notre cerveau en passant de la détection de contours simples à la reconnaissance de visages complets.</p>
+                <h4>Les différents types d'apprentissage</h4>
+                <br>
+                <p><strong>L'apprentissage supervisé</strong> fonctionne comme un cours avec un professeur. L'IA reçoit des données "étiquetées" où la bonne réponse est déjà connue. Par exemple, pour apprendre à reconnaître des chats, elle analyse des milliers de photos où les chats sont déjà identifiés. C'est l'approche la plus directe et souvent la plus efficace quand on dispose de nombreux exemples correctement annotés.</p>
+                <p><strong>L'apprentissage non supervisé</strong> ressemble davantage à un explorateur qui découvre un territoire inconnu. L'IA analyse des données "non étiquetées" pour découvrir elle-même des structures cachées, des regroupements ou des anomalies. Par exemple, analyser les habitudes d'achat de clients pour identifier des groupes de consommateurs similaires, sans connaître à l'avance les catégories existantes.</p>
+                <p><strong>L'apprentissage par renforcement</strong> imite l'apprentissage par essais et erreurs. L'IA interagit avec un environnement et reçoit des récompenses ou des pénalités selon ses actions. C'est ainsi qu'une IA peut apprendre à jouer à un jeu vidéo en maximisant son score, ou qu'un robot peut apprendre à marcher en équilibrant récompenses (progression) et pénalités (chutes).</p>
+                <h4>Exemple intégrateur : AlphaGo</h4>
+                <p>AlphaGo, qui a battu les meilleurs joueurs de Go au monde, illustre parfaitement la puissance de combiner ces approches. Ce système utilisait simultanément l'apprentissage supervisé (analyse de parties de maîtres), l'apprentissage non supervisé (découverte de nouvelles stratégies) et l'apprentissage par renforcement (amélioration par auto-confrontation). Cette combinaison lui a permis de développer des stratégies que même les experts humains n'avaient jamais imaginées.</p>
+
+                <h3>L'IA Générative : La Révolution Créative</h3>
+                <p>L'IA générative représente une évolution fascinante de l'intelligence artificielle. Au lieu de simplement analyser ou classer des données existantes, elle créé du contenu entièrement nouveau : textes, images, musique, code, vidéos. Cette capacité créative ouvre des perspectives révolutionnaires dans de nombreux domaines.</p>
+                <h4>Comment fonctionne la génération ?</h4>
+                <p>Le fonctionnement de l'IA générative repose sur des modèles sophistiqués entraînés sur d'énormes quantités de données. Pour le texte, on utilise des Large Language Models (LLM) qui ont analysé des milliards de mots pour comprendre les relations complexes entre les idées, les concepts et les styles. Pour les images, des modèles comme FLUX ou Midjourney ont étudié des millions d'œuvres visuelles pour comprendre les relations entre formes, couleurs et concepts.</p>
+                <h4>L'Art du Prompt : Communiquer avec l'IA</h4>
+                <p>L'interaction avec l'IA générative se fait principalement via des prompts, ces instructions ou questions que vous donnez au système. Un prompt efficace est comme une recette de cuisine : plus il est précis et détaillé, plus le résultat sera proche de vos attentes. Par exemple, demander "dessine un chat" donnera un résultat générique, tandis que "dessine un chat persan blanc aux yeux bleus, assis sur un coussin de velours rouge dans un salon victorien" produira une image beaucoup plus spécifique.</p>
+                <h4>Les Tokens : Le Langage Interne de l'IA</h4>
+                <p>Pour traiter l'information, l'IA décompose le texte en tokens, des unités de base qui peuvent être des mots complets, des parties de mots, des caractères ou des signes de ponctuation. Cette décomposition permet au modèle de comprendre le contexte et de générer la séquence la plus probable ou la plus créative. C'est un peu comme si l'IA lisait en décomposant chaque phrase en blocs de sens élémentaires.</p>
+                <h4>Les Applications Concrètes</h4>
+                <ul>
+                    <li>Les agents conversationnels comme ChatGPT ou Mistral peuvent rédiger des essais, expliquer des concepts complexes, écrire du code, composer des poèmes ou simuler des conversations spécialisées. Ils deviennent des assistants polyvalents capables de s'adapter à presque tous les domaines.</li>
+                    <li>Les générateurs d'images comme Midjourney ou FLUX créent des visuels saisissants à partir de simples descriptions textuelles. Un architecte peut visualiser instantanément ses idées, un écrivain peut illustrer ses personnages, un marketeur peut créer des visuels publicitaires uniques.</li>
+                    <li>Les générateurs de musique composent des mélodies et des arrangements complets dans tous les styles imaginables, ouvrant de nouvelles possibilités créatives aux musiciens et aux créateurs de contenu.</li>
+                    <li>Les modèles texte-vers-vidéo comme Sora génèrent des séquences vidéo complètes à partir d'un simple prompt textuel, révolutionnant potentiellement la production audiovisuelle.</li>
+                </ul>
+
+                <h2>Conclusion : L'IA comme ensemble d'outils complémentaires</h2>
+                <p>Comprendre l'IA, c'est reconnaître que chaque approche excelle dans des domaines spécifiques. L'IA symbolique apporte précision et fiabilité dans les contextes où les règles sont claires. L’IA basée sur les données est très performante pour analyser des structures complexes et s’adapter à différentes situations. L'IA générative ouvre des horizons créatifs inédits.</p>
+                
+            </div>
+
+            <!-- Section: IA au Quotidien -->
+            <div class="section" id="daily">
+                <h1>L'IA dans notre quotidien : une intégration omniprésente</h1>
+                <div class="emoji-decoration">📱</div>
+                <p>L'intelligence artificielle d'aujourd'hui ne se limite plus aux laboratoires de recherche ; elle s'est démocratisée et intégrée dans notre quotidien sous des formes multiples et variées. Les agents conversationnels comme ChatGPT illustrent parfaitement cette évolution : ils démontrent une capacité remarquable à comprendre et à générer du langage naturel, ouvrant la voie à de nouvelles formes d'interaction homme-machine.</p>
+                <p><strong>Dans le domaine des transports,</strong> les voitures autonomes représentent l'un des défis les plus complexes de l'IA contemporaine. Ces véhicules doivent intégrer simultanément la perception visuelle, la prédiction des comportements, la planification de trajectoires et la prise de décision en temps réel, le tout dans un environnement imprévisible et potentiellement dangereux.</p>
+                <p><strong>La reconnaissance faciale,</strong> devenue omniprésente dans nos smartphones et systèmes de sécurité, illustre la capacité de l'IA à traiter et analyser des données visuelles complexes. Les outils de traduction automatique, quant à eux, démontrent comment l'IA peut franchir les barrières linguistiques en comprenant non seulement la structure grammaticale des langues, mais aussi leurs nuances sémantiques et culturelles.</p>
+                <p><strong>Les systèmes de recommandation </strong>représentent l'une des applications les plus influentes de l'IA contemporaine, façonnant discrètement notre consommation culturelle et informationnelle. Ces algorithmes analysent en permanence nos comportements pour prédire ce qui pourrait nous intéresser. Netflix révolutionne ainsi l'industrie du divertissement en étudiant non seulement ce que nous regardons, mais aussi quand nous le regardons et combien de temps nous y consacrons, créant des profils d'utilisateurs d'une précision remarquable. De même, les plateformes musicales comme Spotify analysent nos habitudes d'écoute, l'heure et le contexte pour créer des playlists personnalisées qui semblent parfois mieux connaître nos goûts que nous-mêmes. Les réseaux sociaux poussent cette logique à l'extrême : Facebook, Instagram, TikTok ou YouTube analysent une multitude de signaux pour créer des "bulles de filtrage" où chaque utilisateur voit un flux d'informations unique, soulevant des questions fondamentales sur la diversité de l'information que nous consommons.</p>
+                <p><strong>Dans le domaine médical,</strong> les logiciels de diagnostic assisté par IA révolutionnent la pratique clinique en analysant des images médicales, en identifiant des comportements pathologiques ou en prédisant l'évolution de certaines maladies avec une précision parfois supérieure à celle des spécialistes humains.
+                    
+                 <p>   Ces multiples applications révèlent ainsi la transformation profonde qu'opère l'intelligence artificielle dans notre société : elle ne se contente plus d'automatiser des tâches répétitives, mais devient un véritable partenaire cognitif capable d'interpréter, d'apprendre et de prédire. Cette évolution soulève néanmoins des interrogations majeures sur notre autonomie décisionnelle et sur l'équilibre entre les bénéfices de la personnalisation et les risques d'une dépendance technologique croissante. L'IA contemporaine nous invite donc à repenser fondamentalement notre rapport à l'information, à la prise de décision et, plus largement, à notre propre intelligence
+                </p>
+                
+            </div>
+
+            <!-- Section: Quiz Final -->
+            <div class="section" id="final">
+                <h1>🏆 Quiz Final</h1>
+                <div class="emoji-decoration">🎓</div>
+                <p>Teste tout ce que tu as retenu de cette présentation sur l'Intelligence Artificielle !</p>
+                
+                <div class="game-container">
+                    <div class="game-instructions">
+                        <h3>🎯 Quiz Final</h3>
+                        <p>Réponds à ce petit questionnaire afin de vérifier tes connaissances ! Chaque bonne réponse vaut 2 points, pour un total de 20 points possibles.</p>
+                    </div>
+                    <div id="final-quiz">
+                    </div>
+                    <div id="final-feedback" class="feedback" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        // Set to keep track of completed section IDs
+        let completedSections = new Set(); 
+
+        // Final Quiz Questions (Updated to reflect new content)
+        const finalQuizQuestions = [
+            {
+                question: "Quel mathématicien britannique a posé la question 'Les machines peuvent-elles penser ?' et introduit le test de Turing ?",
+                options: [
+                    "John McCarthy",
+                    "Alan Turing",
+                    "Marvin Minsky",
+                    "Claude Shannon"
+                ],
+                correct: 1,
+                correction: "La bonne réponse est Alan Turing. Son article de 1950 a été fondamental pour le concept de l'IA."
+            },
+            {
+                question: "Selon la définition simplifiée, qu'est-ce que l'IA prédictive ?",
+                options: [
+                    "Elle crée des images et des sons",
+                    "Elle simule des conversations humaines",
+                    "Elle sert à prévoir ou classer des données",
+                    "Elle programme des robots industriels"
+                ],
+                correct: 2,
+                correction: "L'IA prédictive est utilisée pour classifier des données ou anticiper des événements et des tendances."
+            },
+            {
+                question: "Comment est également appelée l'IA symbolique, qui simule le raisonnement d'experts humains ?",
+                options: [
+                    "Apprentissage profond",
+                    "Réseaux de neurones",
+                    "Systèmes Experts",
+                    "Apprentissage par renforcement"
+                ],
+                correct: 2,
+                correction: "L'IA symbolique est souvent mise en œuvre à travers des Systèmes Experts, basés sur des règles et des connaissances structurées."
+            },
+            {
+                question: "Quel événement majeur a marqué un tournant pour l'IA conversationnelle et générative en 2018 ?",
+                options: [
+                    "La victoire de Deep Blue aux échecs",
+                    "La publication du Cadre d'usage de l'IA en éducation",
+                    "L'émergence des premiers Large Language Models (LLM) comme GPT-1",
+                    "L'adoption de l'AI Act par le Parlement européen"
+                ],
+                correct: 2,
+                correction: "L'année 2018 a vu l'apparition des premiers LLM, révolutionnant l'IA générative et conversationnelle."
+            },
+            {
+                question: "Dans quel domaine l'IA est-elle décrite comme un 'détective infatigable' capable de scruter les images médicales ?",
+                options: [
+                    "La finance",
+                    "Le transport autonome",
+                    "La médecine",
+                    "Les assistants vocaux"
+                ],
+                correct: 2,
+                correction: "L'IA est décrite comme un 'détective infatigable' en médecine, où elle analyse les images médicales pour des diagnostics."
+            },
+            {
+                question: "Qu'est-ce qu'un 'prompt' dans le contexte de l'IA générative ?",
+                options: [
+                    "Un type de réseau de neurones",
+                    "Une instruction ou une question donnée à l'IA pour qu'elle génère du contenu",
+                    "Un algorithme de classification",
+                    "Un outil de diagnostic médical"
+                ],
+                correct: 1,
+                correction: "Un prompt est l'entrée textuelle que vous donnez à une IA générative pour lui indiquer ce qu'elle doit créer."
+            },
+            {
+                question: "Quelle est la principale différence entre l'apprentissage supervisé et l'apprentissage non supervisé ?",
+                options: [
+                    "L'un utilise des images, l'autre du texte",
+                    "L'apprentissage supervisé utilise des données étiquetées, l'apprentissage non supervisé des données non étiquetées",
+                    "L'un est plus ancien que l'autre",
+                    "L'apprentissage non supervisé ne nécessite aucune donnée"
+                ],
+                correct: 1,
+                correction: "La distinction clé est la présence ou l'absence d'étiquettes (réponses connues) dans les données d'entraînement."
+            },
+            {
+                question: "Quel est le nom de l'IA d'IBM qui a battu Garry Kasparov aux échecs en 1997 ?",
+                options: [
+                    "AlphaGo",
+                    "ChatGPT",
+                    "Deep Blue",
+                    "ELIZA"
+                ],
+                correct: 2,
+                correction: "C'est Deep Blue qui a marqué l'histoire en battant le champion du monde d'échecs."
+            },
+            {
+                question: "Quel est l'objectif principal de l'IA ?",
+                options: [
+                    "Remplacer les humains dans toutes les tâches",
+                    "Concevoir des systèmes capables d'apprendre, de raisonner, de s'adapter et de résoudre des problèmes complexes",
+                    "Créer des jeux vidéo plus réalistes",
+                    "Automatiser uniquement les tâches répétitives"
+                ],
+                correct: 1,
+                correction: "L'objectif de l'IA est de simuler et d'étendre les capacités cognitives humaines pour résoudre des problèmes variés."
+            },
+            {
+                question: "Quelle loi européenne a été adoptée en mars 2024 pour réguler l'IA ?",
+                options: [
+                    "Le RGPD",
+                    "L'AI Act",
+                    "La Loi sur le Numérique",
+                    "Le Code de la Propriété Intellectuelle"
+                ],
+                correct: 1,
+                correction: "L'AI Act est la première loi complète au monde sur l'intelligence artificielle, adoptée par l'Union Européenne."
+            }
+        ];
+
+        /**
+         * Updates the global score and displays it.
+         * @param {number} points - The points to add to the score.
+         */
+        function updateScore(points) {
+            score += points;
+            document.getElementById('score').textContent = score;
+        }
+
+        /**
+         * Shows a specific section of the guide and updates the active menu item.
+         * @param {string} sectionId - The ID of the section to show.
+         */
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update menu item active state
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const menuItem = document.querySelector(`.menu-item[onclick*="showSection('${sectionId}')"]`);
+            if (menuItem) {
+                menuItem.classList.add('active');
+            }
+            
+            // Initialize games based on the active section (only final quiz remains)
+            if (sectionId === 'final') {
+                initFinalQuiz();
+            }
+            // If the history section is shown, generate the image.
+            if (sectionId === 'history') {
+                generateAndInsertImage();
+            }
+            // Scroll to top of the main content when changing sections
+            document.querySelector('.main-content').scrollTop = 0;
+        }
+
+        /**
+         * Marks a section as completed in the sidebar menu.
+         * @param {string} sectionId - The ID of the section to mark as complete.
+         */
+        function markSectionComplete(sectionId) {
+            completedSections.add(sectionId);
+            const menuItems = document.querySelectorAll('.menu-item');
+            // Mapping original section IDs to their order in the menu
+            const sectionMapping = {
+                'origins': 0,
+                'intro': 1,
+                'history': 2,
+                'forms': 3,
+                'daily': 4,
+                'final': 5
+            };
+            const sectionIndex = sectionMapping[sectionId];
+            if (sectionIndex !== undefined && menuItems[sectionIndex]) {
+                menuItems[sectionIndex].classList.add('completed');
+            }
+        }
+
+        // --- Final Quiz Logic ---
+        let currentFinalQuestion = 0;
+        let finalScore = 0;
+
+        /**
+         * Initializes the Final Quiz.
+         */
+        function initFinalQuiz() {
+            currentFinalQuestion = 0;
+            finalScore = 0;
+            document.getElementById('final-feedback').style.display = 'none';
+            showFinalQuestion();
+        }
+
+        /**
+         * Displays the current final quiz question or the final results.
+         */
+        function showFinalQuestion() {
+            const container = document.getElementById('final-quiz');
+            if (currentFinalQuestion >= finalQuizQuestions.length) {
+                // All questions answered, display final results
+                markSectionComplete('final');
+                const totalQuizPoints = finalScore * 2;
+                let message = '';
+                let emoji = '';
+                
+                if (totalQuizPoints === 20) {
+                    message = 'Félicitations ! Votre maîtrise de l\'IA est exceptionnelle. Vous avez démontré une compréhension approfondie de tous les concepts clés. Continuez à explorer ce domaine passionnant !';
+                    emoji = '🏆';
+                } else if (totalQuizPoints >= 16) {
+                    message = 'Excellent travail ! Votre compréhension de l\'IA est très solide. Vous avez acquis une base de connaissances impressionnante. N\'hésitez pas à revoir les sections où vous avez eu quelques hésitations pour parfaire vos connaissances.';
+                    emoji = '🌟';
+                } else if (totalQuizPoints >= 10) {
+                    message = 'Bon effort ! Vous avez une bonne compréhension des concepts fondamentaux de l\'IA. Pour aller plus loin, je vous encourage à relire les sections sur les différentes formes d\'IA et leurs applications quotidiennes afin de renforcer vos connaissances.';
+                    emoji = '👍';
+                } else {
+                    message = 'Continuez à apprendre ! L\'IA est un domaine complexe, et il est normal de ne pas tout maîtriser du premier coup. Je vous suggère de reprendre le guide depuis le début, en vous concentrant sur les définitions et les exemples concrets pour bien assimiler les bases. Chaque relecture vous apportera de nouvelles perspectives !';
+                    emoji = '📚';
+                }
+                
+                container.innerHTML = `
+                    <div style="text-align: center;">
+                        <div class="emoji-decoration">${emoji}</div>
+                        <h2>${message}</h2>
+                        <p style="font-size: 1.5em; margin: 20px 0;">Score final : ${totalQuizPoints}/20 points</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(totalQuizPoints / 20) * 100}%"></div>
+                        </div>
+                        <p style="margin-top: 20px;">Score total du jeu : <strong>${score} points</strong></p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const q = finalQuizQuestions[currentFinalQuestion];
+            container.innerHTML = `
+                <div class="quiz-question">
+                    <h3>Question ${currentFinalQuestion + 1}/${finalQuizQuestions.length}</h3>
+                    <p>${q.question}</p>
+                    <div class="quiz-options">
+                        ${q.options.map((option, index) => `
+                            <button class="btn" onclick="checkFinalAnswer(${index})">${option}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Checks the answer for a final quiz question.
+         * @param {number} answerIndex - The index of the user's selected option.
+         */
+        function checkFinalAnswer(answerIndex) {
+            const q = finalQuizQuestions[currentFinalQuestion];
+            const correct = answerIndex === q.correct;
+            const buttons = document.querySelectorAll('.quiz-options .btn');
+            
+            // Disable all buttons for the current question
+            buttons.forEach((btn, index) => {
+                btn.disabled = true;
+                if (index === q.correct) {
+                    btn.classList.add('correct');
+                } else if (index === answerIndex && !correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            if (correct) {
+                finalScore++;
+                updateScore(2);
+                showFeedback('final-feedback', 'Exact ! Tu as bien compris ! ✨', 'success');
+            } else {
+                showFeedback('final-feedback', `Faux. ${q.correction} 📖`, 'error');
+            }
+            
+            // Move to next question after a delay
+            setTimeout(() => {
+                currentFinalQuestion++;
+                showFinalQuestion();
+                document.getElementById('final-feedback').style.display = 'none';
+            }, 3500);
+        }
+
+        /**
+         * Displays a feedback message to the user.
+         * @param {string} elementId - The ID of the feedback element.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success' or 'error' for styling.
+         */
+        function showFeedback(elementId, message, type) {
+            const feedback = document.getElementById(elementId);
+            feedback.textContent = message;
+            feedback.className = `feedback ${type}`;
+            feedback.style.display = 'block';
+            
+            // Hide feedback after a short delay for both success and error messages
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 3000);
+        }
+
+        // Function to generate and insert the new image
+        async function generateAndInsertImage() {
+            const loadingDiv = document.getElementById('loading-image');
+            const imageContainer = document.getElementById('generated-image-container');
+            loadingDiv.style.display = 'block';
+            imageContainer.innerHTML = '';
+
+            const prompt = "A four-panel illustration. Panel 1 (Top-left): Alan Turing, pensive, in 1950s attire (white shirt, suspenders), sitting in front of an old computer or cryptanalysis table, vintage comic book style, grainy textures, blue-green-beige palette. Panel 2 (Top-right): A black and white photograph, realistic style, of several researchers gathered in a garden, with a sign in the background reading 'Dartmouth AI Conference 1956'. Panel 3 (Bottom-left): Representation of the Deep Blue supercomputer playing chess against Garry Kasparov, with a close-up of the chessboard and slightly animated pieces, conveying an impression of technological power, vintage comic book style, grainy textures, blue-green-beige palette. Panel 4 (Bottom-right): A futuristic visual of the Go game between AlphaGo and Lee Sedol, with a minimalist Go board viewed from above, black and white stones being placed, with a subtle digital or hexagonal halo suggesting artificial intelligence, vintage comic book style, grainy textures, blue-green-beige palette.";
+
+            try {
+                const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1} };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    imageContainer.innerHTML = `
+                        <img src="${imageUrl}" alt="Nouveaux grands moments de l'IA générés par l'IA" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <p style="font-size: 0.9em; color: #555; margin-top: 10px;"><em>Nouveaux grands moments de l'IA générés par l'IA.</em></p>
+                    `;
+                } else {
+                    imageContainer.innerHTML = '<p style="color: red;">Erreur : Impossible de générer l\'image. Veuillez réessayer.</p>';
+                    console.error("Erreur de génération d'image:", result);
+                }
+            } catch (error) {
+                imageContainer.innerHTML = '<p style="color: red;">Erreur lors de la requête de génération d\'image.</p>';
+                console.error("Erreur de fetch:", error);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // Initialize the first section when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('origins'); // Start with "Les origines de l'IA"
+            generateAndInsertImage(); // Ensure image generation is called for history section
+        });
+    </script>
+</body>
+</html>
