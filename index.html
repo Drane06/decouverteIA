@@ -521,12 +521,9 @@
                     <li><strong style="color: #0e7658;">2024 :</strong> Marque le développement et la diffusion des premiers agents IA destinés au grand public.</li>
                     <li><strong style="color: #0e7658;">2025 :</strong> Publication du "Cadre d'usage de l'IA en éducation", un document important pour l'intégration responsable de l'IA dans le système éducatif.</li>
                 </ul>
-                <div id="loading-image" style="text-align: center; margin-top: 20px; display: none;">
-                    <p>Génération de l'image en cours... ⏳</p>
-                </div>
                 <div id="generated-image-container" style="text-align: center; margin-top: 30px;">
-                    <img src="https://github.com/Drane06/decouverteIA/blob/main/telechargement.png" alt="Image illustrant l'histoire de l'IA" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
-                    <p style="font-size: 0.9em; color: #555; margin-top: 10px;"><em>Image illustrant l'évolution de l'IA.</em></p>
+                    <img src="https://raw.githubusercontent.com/Drane06/decouverteIA/main/telechargement%20.png" alt="Image illustrant l'histoire de l'IA" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                    <p style="font-size: 0.9em; color: #555; margin-top: 10px;"><em></em></p>
                 </div>
             </div>
 
@@ -775,9 +772,9 @@
             if (sectionId === 'final') {
                 initFinalQuiz();
             }
-            // If the history section is shown, generate the image.
+            // If the history section is shown, ensure the image is there.
             if (sectionId === 'history') {
-                // No need to call generateAndInsertImage() if a static image is used
+                // The image is now directly in the HTML, no need to call a JS function
             }
             // Scroll to top of the main content when changing sections
             document.querySelector('.main-content').scrollTop = 0;
@@ -926,53 +923,10 @@
             }, 3000);
         }
 
-        // Function to generate and insert the new image
-        // This function is no longer needed if a static image is used
-        /*
-        async function generateAndInsertImage() {
-            const loadingDiv = document.getElementById('loading-image');
-            const imageContainer = document.getElementById('generated-image-container');
-            loadingDiv.style.display = 'block';
-            imageContainer.innerHTML = '';
-
-            const prompt = "A four-panel illustration. Panel 1 (Top-left): Alan Turing, pensive, in 1950s attire (white shirt, suspenders), sitting in front of an old computer or cryptanalysis table, vintage comic book style, grainy textures, blue-green-beige palette. Panel 2 (Top-right): A black and white photograph, realistic style, of several researchers gathered in a garden, with a sign in the background reading 'Dartmouth AI Conference 1956'. Panel 3 (Bottom-left): Representation of the Deep Blue supercomputer playing chess against Garry Kasparov, with a close-up of the chessboard and slightly animated pieces, conveying an impression of technological power, vintage comic book style, grainy textures, blue-green-beige palette. Panel 4 (Bottom-right): A futuristic visual of the Go game between AlphaGo and Lee Sedol, with a minimalist Go board viewed from above, black and white stones being placed, with a subtle digital or hexagonal halo suggesting artificial intelligence, vintage comic book style, grainy textures, blue-green-beige palette.";
-
-            try {
-                const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1} };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                    imageContainer.innerHTML = `
-                        <img src="${imageUrl}" alt="Nouveaux grands moments de l'IA générés par l'IA" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
-                        <p style="font-size: 0.9em; color: #555; margin-top: 10px;"><em>Nouveaux grands moments de l'IA générés par l'IA.</em></p>
-                    `;
-                } else {
-                    imageContainer.innerHTML = '<p style="color: red;">Erreur : Impossible de générer l\'image. Veuillez réessayer.</p>';
-                    console.error("Erreur de génération d'image:", result);
-                }
-            } catch (error) {
-                imageContainer.innerHTML = '<p style="color: red;">Erreur lors de la requête de génération d\'image.</p>';
-                console.error("Erreur de fetch:", error);
-            } finally {
-                loadingDiv.style.display = 'none';
-            }
-        }
-        */
-
         // Initialize the first section when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             showSection('origins'); // Start with "Les origines de l'IA"
-            // No need to call generateAndInsertImage() as a static image is now used
+            // The image is now directly in the HTML, no need for a JS function call here
         });
     </script>
 </body>
