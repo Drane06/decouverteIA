@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -176,6 +176,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            background-color: #f0f2f5; /* Added background for contrast */
         }
 
         .section {
@@ -183,8 +184,8 @@
             background: white;
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Subtler shadow */
-            border: 1px solid #ddd; /* Subtler border */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Made shadow more prominent */
+            border: 2px solid #c0c0c0; /* Made border more visible */
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             margin-bottom: 20px;
         }
@@ -521,11 +522,11 @@
                     <li><strong style="color: #0e7658;">2025 :</strong> Publication du "Cadre d'usage de l'IA en éducation", un document important pour l'intégration responsable de l'IA dans le système éducatif.</li>
                 </ul>
                 <div id="loading-image" style="text-align: center; margin-top: 20px; display: none;">
-                    
-            </div>
-                    
-             
-           
+                    <p>Génération de l'image en cours... ⏳</p>
+                </div>
+                <div id="generated-image-container" style="text-align: center; margin-top: 30px;">
+                    <img src="https://github.com/Drane06/decouverteIA/blob/main/telechargement.png" alt="Image illustrant l'histoire de l'IA" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                    <p style="font-size: 0.9em; color: #555; margin-top: 10px;"><em>Image illustrant l'évolution de l'IA.</em></p>
                 </div>
             </div>
 
@@ -776,7 +777,7 @@
             }
             // If the history section is shown, generate the image.
             if (sectionId === 'history') {
-                generateAndInsertImage();
+                // No need to call generateAndInsertImage() if a static image is used
             }
             // Scroll to top of the main content when changing sections
             document.querySelector('.main-content').scrollTop = 0;
@@ -926,6 +927,8 @@
         }
 
         // Function to generate and insert the new image
+        // This function is no longer needed if a static image is used
+        /*
         async function generateAndInsertImage() {
             const loadingDiv = document.getElementById('loading-image');
             const imageContainer = document.getElementById('generated-image-container');
@@ -964,13 +967,15 @@
                 loadingDiv.style.display = 'none';
             }
         }
+        */
 
         // Initialize the first section when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             showSection('origins'); // Start with "Les origines de l'IA"
-            generateAndInsertImage(); // Ensure image generation is called for history section
+            // No need to call generateAndInsertImage() as a static image is now used
         });
     </script>
 </body>
 </html>
+
  
